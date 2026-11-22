@@ -1,405 +1,127 @@
-# Save3Clicks for M365 Copilot
+# Save3Clicks for Microsoft 365 Copilot
 
-A userscript that automatically selects your preferred model in Microsoft 365 Copilot and focuses the prompt field so you can start typing immediately.
+A configurable userscript that automatically selects your preferred model in Microsoft 365 Copilot and focuses the prompt field.
 
-[Install from Greasy Fork](https://greasyfork.org/en/scripts/569121-save3clicks-m365-copilot)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Userscript](https://img.shields.io/badge/type-userscript-blue.svg)](https://github.com/w6a8w8/m365-copilot-model-auto-selector)
 
-> [!NOTE]
-> This script is intended for the Microsoft 365 Copilot web interface at `https://m365.cloud.microsoft/`. Available models and interface controls depend on your Microsoft 365 account, licence, organisation, interface language, and the current Copilot interface.
+> [!IMPORTANT]
+> This is an independent, unofficial project. It is not developed, supported, or endorsed by Microsoft.
 
 ## Features
 
-- Automatically selects a configured Copilot model.
-- Supports model selectors with multiple menu levels.
-- Avoids reopening the model menu when the configured model is already active.
-- Automatically focuses the Copilot prompt after model selection.
-- Restores the configured model when Copilot returns to Automatic mode.
-- Handles internal navigation between Copilot chats.
-- Lets you enable or disable model selection and prompt auto-focus independently.
-- Avoids taking focus when you are already using another editable field.
-- Provides manual commands for selection, focus, configuration, and diagnostics.
-- Stores configuration through the userscript manager.
-- Prefers semantic selectors and accessibility attributes over generated CSS class names.
-- Supports Violentmonkey and compatible userscript managers.
+- Automatically selects a configured model when Microsoft 365 Copilot opens.
+- Supports nested model menus through a configurable menu path.
+- Separately configures the expanded menu path and collapsed selector label.
+- Automatically focuses the chat prompt after model selection.
+- Avoids stealing focus while you are editing another field.
+- Handles client-side navigation between Copilot chats.
+- Detects when Copilot returns to automatic mode and attempts selection again.
+- Provides manual controls and diagnostics through the userscript-manager menu.
+- Stores configuration locally through the userscript manager.
+- Includes handling for dynamically rendered menus and Firefox interaction behaviour.
 
-## Default configuration
+## Compatibility
 
-The default model-selection path is:
+| Component | Support |
+|---|---|
+| Microsoft 365 Copilot | `https://copilot.cloud.microsoft/*` |
+| Violentmonkey | Recommended |
+| Firefox | Supported by the script's focus and click handling |
+| Chromium-based browsers | Expected to work with a compatible userscript manager |
+| Other userscript managers | Not verified |
 
-```text
-GPT
-└── GPT 5.6 Think deeper
-```
-
-In the userscript menu, the same path is represented as:
-
-```text
-GPT | GPT 5.6 Think deeper
-```
-
-The path is configurable, so it can be updated when Microsoft changes model names or reorganises the model-selection menu.
+Microsoft can change the Copilot interface independently of this project. Model names, menu structures, and interface elements may differ by account, language, licence, or rollout group.
 
 ## Requirements
 
-You need:
-
-- Firefox, Chrome, Edge, or another compatible browser;
-- Violentmonkey, Tampermonkey, or another compatible userscript manager;
-- access to Microsoft 365 Copilot at `https://m365.cloud.microsoft/`.
-
-Violentmonkey is recommended because the script is primarily developed and tested with its userscript APIs.
+- Access to [Microsoft 365 Copilot](https://copilot.cloud.microsoft/)
+- [Violentmonkey](https://violentmonkey.github.io/) or a compatible userscript manager
+- Support for these userscript APIs:
+  - `GM_getValue`
+  - `GM_setValue`
+  - `GM_registerMenuCommand`
 
 ## Installation
 
-### Option 1: Install from Greasy Fork
+1. Install [Violentmonkey](https://violentmonkey.github.io/).
+2. Open `save3clicks.user.js` in this repository.
+3. Select **Raw**.
+4. Confirm the installation in Violentmonkey.
+5. Open or reload [Microsoft 365 Copilot](https://copilot.cloud.microsoft/).
 
-1. Install Violentmonkey or another compatible userscript manager.
-2. Open the [Save3Clicks Greasy Fork page](https://greasyfork.org/en/scripts/569121-save3clicks-m365-copilot).
-3. Select **Install this script**.
-4. Review the source code.
-5. Confirm the installation in your userscript manager.
-6. Open or reload Microsoft 365 Copilot.
+If the script file currently has a different name, use the file containing the `// ==UserScript==` metadata block. A `.user.js` suffix is recommended because userscript managers commonly recognize it as directly installable.
 
-### Option 2: Install from GitHub
+## Default configuration
 
-1. Install Violentmonkey or another compatible userscript manager.
-2. Open the `.user.js` file in this repository.
-3. Click **Raw** or **Download raw file**.
-4. Your userscript manager should offer to install the script.
-5. Review the source code and confirm the installation.
-6. Open or reload Microsoft 365 Copilot.
+Version 1.8.3 uses these defaults:
 
-### Option 3: Install manually
+| Setting | Default |
+|---|---|
+| Expanded menu path | `GPT` → `GPT 5.6 Sol Hlubší přemýšlení` |
+| Collapsed selector label | `GPT 5.6 Sol Think` |
+| Automatic model selection | Enabled |
+| Prompt auto-focus | Enabled |
 
-If automatic installation does not open:
-
-1. Open the userscript manager dashboard.
-2. Create a new script.
-3. Remove the generated template.
-4. Copy the complete contents of the repository's `.user.js` file.
-5. Paste the code into the userscript editor.
-6. Save the script.
-7. Open or reload Microsoft 365 Copilot.
+The expanded menu path and collapsed selector label are configured separately because Copilot may show different text while the menu is open and after the model has been selected.
 
 ## Configuration
 
-Open the userscript manager menu while Microsoft 365 Copilot is open. Save3Clicks provides the following commands.
+Open Microsoft 365 Copilot, select the Violentmonkey icon, and open the commands for **Save3Clicks for M365 Copilot**.
 
-### Set model path
+| Command | Purpose |
+|---|---|
+| **Configure model** | Sets the expanded menu path and collapsed selector label. |
+| **Toggle automatic selection** | Enables or disables automatic model selection. |
+| **Toggle prompt auto-focus** | Enables or disables automatic prompt focus. |
+| **Select configured model now** | Runs model selection immediately. |
+| **Focus prompt field now** | Attempts to focus the prompt immediately. |
+| **Reset model configuration to default** | Restores the bundled defaults. |
+| **Show current configuration** | Displays settings and detected interface state for troubleshooting. |
 
-Changes the sequence of model-menu entries selected by the script.
+### Expanded menu path
 
-Separate menu levels with a vertical bar:
-
-```text
-GPT | GPT 5.6 Think deeper
-```
-
-You can also enter each menu level on a separate line:
-
-```text
-GPT
-GPT 5.6 Think deeper
-```
-
-The labels must match the entries displayed in your Copilot model menu.
-
-### Toggle automatic selection
-
-Enables or disables automatic model selection.
-
-When disabled, you can still run **Select configured model now** manually.
-
-### Toggle prompt auto-focus
-
-Enables or disables automatic focusing of the Copilot prompt independently of model selection.
-
-When disabled, you can still run **Focus prompt field now** manually.
-
-### Select configured model now
-
-Immediately attempts to select the configured model.
-
-Use this command to:
-
-- test a new model path;
-- restore the model manually;
-- diagnose a Copilot interface change.
-
-### Focus prompt field now
-
-Immediately attempts to find and focus the main Copilot prompt.
-
-### Reset model path to default
-
-Restores the default model path:
+Enter the menu levels in selection order and separate them with a vertical bar (`|`).
 
 ```text
-GPT | GPT 5.6 Think deeper
+GPT | GPT 5.6 Sol Hlubší přemýšlení
 ```
 
-### Show current configuration
+For a three-level menu:
 
-Displays diagnostic information, including:
+```text
+Provider | Model family | Model name
+```
 
-- script version;
-- automatic-selection status;
-- prompt auto-focus status;
-- configured model path;
-- current URL;
-- whether the current page was detected as a Copilot chat;
-- detected model-switcher text;
-- whether the configured model appears to be active;
-- whether the prompt field was found;
-- whether the prompt field is focused;
-- the last successfully handled URL.
+Use the labels displayed in your own Copilot interface.
 
-This information is useful when reporting a problem.
+### Collapsed selector label
+
+Enter the label displayed by the closed model selector after you manually select the desired model.
+
+```text
+GPT 5.6 Sol Think
+```
+
+The script uses this value to determine whether the desired model is already active and to verify a completed selection.
 
 ## How it works
 
-Microsoft 365 Copilot loads and updates much of its interface dynamically.
-
-Save3Clicks therefore:
-
-1. waits for the model switcher to become available;
-2. checks whether the configured model is already active;
-3. opens the model-selection menu only when necessary;
-4. follows the configured model-menu path;
-5. selects the final model;
-6. allows Copilot to finish updating its interface;
-7. identifies and focuses the main prompt field;
-8. monitors internal navigation and model-switcher changes;
-9. repeats the necessary actions when Copilot returns to Automatic mode.
-
-Repeated navigation and mutation events are debounced or limited to one DOM check per animation frame where appropriate.
-
-The script prefers stable element IDs, roles, ARIA attributes, and visible labels. Generated Microsoft 365 CSS class names are not used as primary selectors.
-
-## Prompt auto-focus safeguards
-
-Prompt detection uses multiple signals to distinguish the Copilot composer from search fields and other editable controls.
-
-The script:
-
-- excludes search inputs, search boxes, and search regions;
-- checks whether a candidate is connected, visible, enabled, and editable;
-- prefers text areas and editable elements with textbox semantics;
-- considers the candidate's position and dimensions;
-- considers prompt, message, chat, composer, and input context;
-- looks for a related send control;
-- validates a cached prompt before reusing it;
-- clears cached prompt information after internal navigation;
-- avoids taking focus when another editable field is active;
-- rechecks focus before performing a delayed focus operation;
-- verifies whether focusing succeeded;
-- treats a focused descendant of a rich-text editor as a successful focus.
-
-Prompt detection is intentionally conservative because Microsoft can change the Copilot interface without notice.
-
-## Browser compatibility
-
-The script uses standard browser DOM APIs and the following userscript APIs:
-
-```text
-GM_getValue
-GM_setValue
-GM_registerMenuCommand
-```
-
-Primary testing should cover:
-
-- Firefox with Violentmonkey;
-- Chrome with Violentmonkey.
-
-Tampermonkey should generally support the APIs used by the script, but behaviour may differ between browsers and userscript managers.
-
-## Updating the script
-
-### Greasy Fork installation
-
-If you installed the script from Greasy Fork, your userscript manager can normally check for updates automatically.
-
-You can also open the installed script in your userscript manager and run its update check manually.
-
-### GitHub or manual installation
-
-If you installed the script manually:
-
-1. download the latest `.user.js` file;
-2. open the installed script in your userscript manager;
-3. replace the existing source with the latest complete version;
-4. save it;
-5. reload Microsoft 365 Copilot.
-
-Review changes before installing an update.
-
-## Troubleshooting
-
-### The script does not run
-
-Check that:
-
-1. the userscript is enabled;
-2. the metadata contains this match pattern:
-
-   ```text
-   https://m365.cloud.microsoft/*
-   ```
-
-3. the userscript manager has permission to run on the Microsoft 365 Copilot site;
-4. you reloaded the Copilot page after installing or updating the script;
-5. you are using the Microsoft 365 Copilot web interface.
-
-### The wrong model is selected
-
-1. Open the Copilot model menu manually.
-2. Note the exact labels and menu hierarchy.
-3. Run **Set model path**.
-4. Enter the labels in order, separated with `|`.
-
-For example:
-
-```text
-GPT | GPT 5.6 Think deeper
-```
-
-5. Run **Select configured model now** to test the path.
-
-### The model cannot be found
-
-Microsoft may have renamed, removed, or reorganised the available models.
-
-Update the configured model path so that every level matches the current visible menu text.
-
-Model availability can differ between accounts and organisations.
-
-### The prompt is not focused
-
-1. Run **Focus prompt field now**.
-2. Run **Show current configuration**.
-3. Check whether the prompt field was found.
-4. Open the browser developer console.
-5. Look for messages beginning with:
-
-   ```text
-   [Save3Clicks]
-   ```
-
-6. Report the browser, userscript manager, script version, Copilot interface language, and relevant diagnostic output.
-
-### Focus moves to the wrong field
-
-Disable automatic prompt focus through:
-
-```text
-Toggle prompt auto-focus
-```
-
-Then report:
-
-- browser and version;
-- userscript manager and version;
-- script version;
-- Copilot interface language;
-- output from **Show current configuration**;
-- steps needed to reproduce the problem.
-
-Do not include confidential conversation content, account information, access tokens, or organisation data.
-
-### The script stopped working after a Copilot update
-
-Microsoft may have changed:
-
-- model names;
-- menu hierarchy;
-- accessible labels;
-- element roles;
-- model-switcher structure;
-- prompt-editor structure.
-
-First, verify and update the configured model path. If the problem remains, open an issue with the diagnostic information listed below.
-
-## Reporting an issue
-
-Include:
-
-- browser and version;
-- userscript manager and version;
-- script version;
-- operating system;
-- Copilot interface language;
-- whether the problem occurs in a new or existing chat;
-- configured model path;
-- output from **Show current configuration**;
-- relevant console messages beginning with `[Save3Clicks]`;
-- clear reproduction steps.
-
-If possible, include relevant semantic HTML attributes such as:
-
-- `id`;
-- `role`;
-- `aria-label`;
-- `aria-haspopup`;
-- `aria-expanded`;
-- `contenteditable`.
-
-Do not publish:
-
-- conversation contents;
-- personal information;
-- organisation information;
-- authentication tokens;
-- cookies;
-- session identifiers.
-
-## Testing checklist
-
-Before publishing a new version, test:
-
-- initial Copilot page load;
-- new chat;
-- existing conversation;
-- internal navigation between conversations;
-- configured model already active;
-- Copilot returning to Automatic mode;
-- automatic selection enabled;
-- automatic selection disabled;
-- prompt auto-focus enabled;
-- prompt auto-focus disabled;
-- manual model selection;
-- manual prompt focus;
-- user focusing another editable field during initialization;
-- browser console for unexpected errors.
-
-Where possible, test both:
-
-- Firefox with Violentmonkey;
-- Chrome with Violentmonkey.
-
-## Contributing
-
-Contributions and compatibility reports are welcome.
-
-When proposing a change:
-
-1. create or use a dedicated branch;
-2. keep each change focused on one logical improvement;
-3. preserve Firefox and Chrome compatibility;
-4. avoid generated CSS class names as selectors;
-5. prefer stable IDs, roles, ARIA attributes, and visible labels;
-6. include explanatory comments for non-obvious logic;
-7. test model selection and prompt focusing;
-8. describe the tested browser and userscript manager;
-9. open a pull request with a concise explanation of the change.
-
-When updating an existing pull request, commit additional changes directly to that pull request's source branch.
+1. The script waits for a visible Copilot model-selector button.
+2. It compares the current selector text with the configured collapsed label.
+3. If the desired model is not active, it opens the model menu.
+4. It follows the configured menu path one level at a time.
+5. It selects the final item and checks the resulting selector label.
+6. It locates the most likely chat prompt and focuses it.
+7. It watches client-side navigation and relevant selector changes so that it can run again when needed.
+
+Menu matching uses accessible names and rendered text. It normalizes case, whitespace, and punctuation, so forms such as `GPT-5.6` and `GPT 5.6` can be treated as equivalent.
+
+The prompt detector scores visible editable elements and rejects common search fields. Automatic focus is skipped when another editable field is already active.
 
 ## Privacy and permissions
 
-The script runs locally in your browser on matching Microsoft 365 Copilot pages.
-
-Its declared userscript permissions are limited to:
+The script requests only these userscript permissions:
 
 ```text
 GM_getValue
@@ -407,33 +129,159 @@ GM_setValue
 GM_registerMenuCommand
 ```
 
-These permissions are used to:
+It stores the following settings through the userscript manager:
 
-- store the configured model path;
-- store whether automatic selection is enabled;
-- store whether prompt auto-focus is enabled;
-- provide userscript menu commands.
+- model menu path;
+- collapsed selector label;
+- automatic-selection preference;
+- prompt-auto-focus preference.
 
-The script does not require external libraries.
+The script does not declare `GM_xmlhttpRequest`, `@connect`, or another userscript network-request permission. Its metadata limits execution to:
 
-Review the source code before installation and install userscripts only from sources you trust.
+```text
+https://copilot.cloud.microsoft/*
+```
 
-## Limitations
+Microsoft 365 Copilot and your userscript manager remain subject to their own permissions, privacy policies, and terms.
 
-- Microsoft can change the Copilot interface or menu structure at any time.
-- Model names and availability can differ between accounts and organisations.
-- Localised interface labels may require a different model path.
-- Prompt detection may require adjustment after a major interface redesign.
-- The script cannot provide models that are unavailable to your account.
-- Behaviour may differ between browsers and userscript managers.
-- Successful syntax validation does not verify compatibility with future Copilot interface changes.
+## Troubleshooting
+
+### The model is not selected
+
+1. Select the desired model manually.
+2. Record every visible level of the expanded menu.
+3. Record the label shown by the closed selector afterward.
+4. Update both values using **Configure model**.
+5. Run **Select configured model now**.
+6. Run **Show current configuration** and check:
+   - configured model path;
+   - expected collapsed selector;
+   - current selector text;
+   - configured-model-active status.
+7. Open the browser developer console and filter for:
+
+```text
+[Save3Clicks]
+```
+
+### The prompt is not focused
+
+- Confirm that **Prompt auto-focus** is enabled.
+- Run **Focus prompt field now**.
+- Use **Show current configuration** to check whether a prompt field was found.
+- Check whether another input, textarea, or editable element already has focus. The script deliberately avoids interrupting active editing.
+
+### The script stopped working after a Copilot update
+
+First verify the configured menu path and collapsed selector label. Microsoft may change visible labels, accessibility attributes, menu nesting, or rendering behaviour. If the labels are correct but selection still fails, collect the diagnostic information below and open an issue.
+
+### Firefox-specific problem
+
+Include these details in the report:
+
+- Firefox version;
+- Violentmonkey version;
+- Save3Clicks version;
+- configured expanded menu path;
+- configured collapsed selector label;
+- relevant console messages beginning with `[Save3Clicks]`;
+- exact reproduction steps.
+
+Remove account names, prompts, conversation content, tenant information, and other private data before posting.
+
+## Reporting an issue
+
+Use [GitHub Issues](https://github.com/w6a8w8/m365-copilot-model-auto-selector/issues).
+
+Before opening an issue:
+
+1. install the latest available version;
+2. reload Copilot and reproduce the problem;
+3. run **Show current configuration**;
+4. inspect the developer console for `[Save3Clicks]` messages;
+5. check whether the same issue has already been reported.
+
+Include:
+
+- browser and exact version;
+- userscript manager and exact version;
+- Save3Clicks version;
+- configured model path and selector label;
+- expected behaviour;
+- actual behaviour;
+- repeatable steps;
+- sanitized console output.
+
+## Development
+
+Save3Clicks is plain JavaScript and requires no build step or runtime dependencies.
+
+Recommended repository structure:
+
+```text
+.
+├── .github/
+│   └── ISSUE_TEMPLATE/
+├── LICENSE
+├── README.md
+└── save3clicks.user.js
+```
+
+For each change:
+
+1. create a focused branch from `main`;
+2. make one logically related change;
+3. update the userscript `@version` value;
+4. update the version shown by **Show current configuration**;
+5. test a fresh Copilot page load;
+6. test client-side navigation between chats;
+7. test with the configured model already active;
+8. test with another model or automatic mode active;
+9. test with automatic selection disabled;
+10. verify that prompt focus does not interrupt another active editor;
+11. merge the tested branch into `main`.
+
+### Versioning
+
+The project follows [Semantic Versioning](https://semver.org/) where practical:
+
+- **Patch**, for example `1.8.3` → `1.8.4`: compatible bug fix
+- **Minor**, for example `1.8.3` → `1.9.0`: backward-compatible feature
+- **Major**, for example `1.8.3` → `2.0.0`: incompatible configuration or behaviour change
+
+## Known limitations
+
+- The script depends on a web interface controlled by Microsoft and may require updates after interface changes.
+- Models and labels can vary between accounts, languages, licences, and rollout groups.
+- Label-based configuration must be updated when Microsoft renames or restructures a model entry.
+- Prompt detection uses heuristics because the page can contain multiple editable elements.
+- Compatibility with userscript managers other than Violentmonkey has not been verified by this project.
+
+## Contributing
+
+Bug reports and focused contributions are welcome.
+
+For code contributions:
+
+- keep each change limited to one problem or feature;
+- explain why the change is needed;
+- describe exactly how it was tested;
+- avoid unrelated formatting changes;
+- update documentation when behaviour or configuration changes;
+- do not include private Copilot content in screenshots, logs, or test data.
+
+## Security
+
+Review userscript source code before installation and install it only from a source you trust.
+
+Do not publish credentials, cookies, session data, private prompts, or confidential Microsoft 365 content in an issue. If GitHub private vulnerability reporting is enabled for this repository, use it for security-sensitive reports. Otherwise, request a private reporting channel without posting vulnerability details publicly.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
 
 ## Disclaimer
 
-This project is independent and is not affiliated with, endorsed by, sponsored by, or maintained by Microsoft.
+This project automates interaction with a third-party web interface. Microsoft may change that interface at any time. Test each release in your own environment before relying on it.
 
-The script interacts with a web interface that may change without notice. Use it at your own discretion and review updates before installing them.
-
-## Licence
-
-See the repository licence file for the terms that apply to this project.
+Microsoft, Microsoft 365, and Copilot are trademarks of the Microsoft group of companies. Their use here identifies compatibility and does not imply affiliation or endorsement.
