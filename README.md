@@ -1,7 +1,7 @@
 # M365 Copilot Auto Select
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)](m365-copilot-auto-select.user.js)
+[![Version](https://img.shields.io/badge/version-1.8.5-brightgreen.svg)](m365-copilot-auto-select.user.js)
 
 A lightweight userscript that automatically selects your preferred model and focuses the prompt input in Microsoft 365 Copilot.
 
