@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         Save3Clicks for M365 Copilot
-// @namespace    anon.local.Save3Clicks
-// @version      1.8.3
+// @namespace    https://github.com/w6a8w8
+// @version      1.8.4
 // @description  Automatically selects a preferred model and focuses the prompt field in Microsoft 365 Copilot.
 // @match        https://copilot.cloud.microsoft/*
+// @updateURL    https://raw.githubusercontent.com/w6a8w8/m365-copilot-model-auto-selector/main/save3clicks.user.js
+// @downloadURL  https://raw.githubusercontent.com/w6a8w8/m365-copilot-model-auto-selector/main/save3clicks.user.js
 // @run-at       document-idle
 // @grant        GM_getValue
 // @grant        GM_setValue
